@@ -1,0 +1,19 @@
+version : '3'
+
+services:
+    lb:
+        image: haproxy
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./haproxy:/usr/local/etc/haproxy
+    chat-client:
+        image: chat-client
+        ports:
+            - "8080:8080"
+    ws1:
+        image: chat-server
+    ws2:
+        image: chat-server
+    redis:
+        image: redis
