@@ -4,6 +4,7 @@
  * @property {number} PORT
  * @property {string=} REDIS_CHAT_CHANNEL
  * @property {string=} REDIS_HOST
+ * @property {string=} REDIS_MESSAGE_LIST_CHANNEL
  */
 
 /**

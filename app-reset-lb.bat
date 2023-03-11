@@ -1,0 +1,1 @@
+docker kill -s USR2 chatroom-lb-1

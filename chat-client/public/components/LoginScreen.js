@@ -1,5 +1,5 @@
 import { h } from '../preact';
-import { useEffect, useState, useCallback, useRef } from '../preactHooks'
+import { useEffect, useState, useRef } from '../preactHooks'
 
 export const LoginScreen = ({ handleSetUser }) => {
   const ref = useRef(null);

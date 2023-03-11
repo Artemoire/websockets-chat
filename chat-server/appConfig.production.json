@@ -2,5 +2,6 @@
   "MODE": "production",
   "PORT": 3000,
   "REDIS_CHAT_CHANNEL": "livechat",
-  "REDIS_HOST": "redis:6379"
+  "REDIS_HOST": "redis:6379",
+  "REDIS_MESSAGE_LIST_CHANNEL": "chatlist"
 }

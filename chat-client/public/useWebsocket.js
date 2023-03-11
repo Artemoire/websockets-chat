@@ -1,46 +1,44 @@
 import { useEffect, useLayoutEffect, useState, useCallback, useRef } from './preactHooks'
 
-export const useWebsocket = (url, config = {}) => {
-  const [readyState, setReadyState] = useState(-1);
-  const wsRef = useRef(null);
+export const useWebsocket = (url) => {
+    const [messageQueue, setMessageQueue] = useState([]);
+    const [readyState, setReadyState] = useState(-1);
+    const [hasRecievedMessages, setHasRecievedMessages] = useState(false);
+    const messageQueueRef = useRef([]);
+    const wsRef = useRef(null);
 
-  useLayoutEffect(() => {
-    wsRef.current = new WebSocket(url);
-    wsRef.current.onopen = () => {
-      console.log("[INFO] WebSocket Connection Opened");
-      setReadyState(WebSocket.OPEN);
-    }
-    wsRef.current.onclose = () => {
-      setReadyState(WebSocket.CLOSED);
-      console.log("[INFO] WebSocket Connection Closed");
-    }
-    wsRef.current.onerror = (err) => console.error(err);
-  }, []);
+    useEffect(() => {
+        wsRef.current = new WebSocket(url);
+        wsRef.current.onopen = () => {
+            console.log("[INFO] WebSocket Connection Opened");
+            setReadyState(WebSocket.OPEN);
+        }
+        wsRef.current.onclose = () => {
+            setReadyState(WebSocket.CLOSED);
+            console.log("[INFO] WebSocket Connection Closed");
+        }
+        wsRef.current.onerror = (err) => console.error(err);
 
-  useLayoutEffect(() => {
-    wsRef.current.onmessage = (ev) => {
-      if (config.onmessage) config.onmessage(ev.data);
-      else {
-        const events = config.events || {};
+        wsRef.current.onmessage = (ev) => {
+            setHasRecievedMessages(true);
+            messageQueueRef.current.push(ev.data);
+        }
 
-        const payload = JSON.parse(ev.data);
-        if (payload.event in events) events[payload.event](payload.data);
-      }
-    }
+    }, []);
 
-    return () => {
-      wsRef.current.onmessage = null;
-    }
-  })
-  const sendMessage = useCallback((k) => {
-    if (wsRef.current === null || wsRef.current.readyState !== WebSocket.OPEN) return;
-    wsRef.current.send(k);
-  }, []);
+    useEffect(() => {
+        if (hasRecievedMessages) {
+            setHasRecievedMessages(false);
+            setMessageQueue(messageQueueRef.current);
+            messageQueueRef.current = [];
+        }
+    })
 
-  const emit = useCallback((event, data) => {
-    if (wsRef.current === null || wsRef.current.readyState !== WebSocket.OPEN) return;
-    wsRef.current.send(JSON.stringify({ event, data }));
-  })
 
-  return { readyState, emit, sendMessage };
+    const sendMessage = useCallback((message) => {
+        if (wsRef.current === null || wsRef.current.readyState !== WebSocket.OPEN) return;
+        wsRef.current.send(message);
+    })
+
+    return { readyState, messageQueue, sendMessage };
 }

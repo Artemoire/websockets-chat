@@ -33,8 +33,12 @@ export const ChatBox = ({ say }) => {
   }
 
 
-  return h("div", null,
-    h("input", { type: "text", placeholder: "Aa", ref, value: state.value, onKeyDown: handleKeyDown, onChange: handleChange }),
+  return h("div", { style: "display: flex; width: 600px" },
+    h("input", {
+      type: "text", placeholder: "Aa",
+      style: "flex: 1 1",
+      ref, value: state.value, onKeyDown: handleKeyDown, onChange: handleChange
+    }),
     h("button", { onClick: handleClick }, "Send")
   )
 }

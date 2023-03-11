@@ -18,8 +18,8 @@ function configureWebsocket(config) {
 
 /**
  * @typedef {Object} WebSocketEvent
- * @property {ws.connection} connection
- * @property {"message"|"open"|"close"} type - Indicates whether the Courage component is present.
+ * @property {{connection: ws.connection}} client - user object contains connection object, can be used to store user state
+ * @property {"message"|"open"|"close"} type - Type of websocket event
  * @property {any=} data - Only present on message type event
  * @property {any} server - Server state
  */
@@ -44,7 +44,6 @@ function middly(config) {
   function Middly() {
   }
   /**
-   * 
    * @param {"message"|"open"|"close"} event 
    * @param {WebSocketMiddleware} callback 
    */
@@ -65,7 +64,7 @@ function middly(config) {
    * WebSocketEvent handler invokes middlewares
    * @param {WebSocketEvent} wsEvent 
    */
-  const handle = (wsEvent) => {
+  const handle = async (wsEvent) => {
     const callbacks = middlewares[wsEvent.type];
     if (callbacks.length === 0) return;
     let nexted;
@@ -73,55 +72,32 @@ function middly(config) {
     const next = () => nexted = true;
     do {
       nexted = false;
-      callbacks[i](wsEvent, next);
+      await callbacks[i](wsEvent, next);
       i++;
     } while (i < callbacks.length && nexted)
   }
 
   const server = new Middly();
+  server.clients = [];
 
   // integrate websocket
   ws.on("request", (request) => {
     const connection = request.accept(null, request.origin);
-    handle({ type: "open", connection, server });
+    const client = { connection };
+    server.clients.push(client);
+    handle({ type: "open", client, server });
 
     connection.on("close", () => {
-      handle({ type: "close", connection, server });
+      server.clients.splice(server.clients.indexOf(client), 1)
+      handle({ type: "close", client, server });
     });
     connection.on("message", (data) => {
-      handle({ type: "message", connection, server, data: data.utf8Data })
+      handle({ type: "message", client, server, data: data.utf8Data })
     })
   })
 
   return server;
 
-  // const _emit = (event, msg) => {
-  //   const callbacks = middlewares[event]; // TODO: maybe need not event because msg.type
-  //   if (callbacks.length === 0) return;
-
-
-  // }
-
-  // integrateWebsocket(ws, _emit);
-
-  // return {
-  //   use(eventOrCallback, callback) {
-  //     let events;
-  //     if (typeof eventOrCallback === 'function') {
-  //       events = ['message', 'open', 'close'];
-  //       callback = eventOrCallback;
-  //     } else {
-  //       events = [eventOrCallback];
-  //     }
-
-  //     for (const event of events) {
-  //       middlewares[event].push(callback);
-  //     }
-
-  //     return this;
-  //   },
-  //   ws // TODO: remove ws
-  // }
 }
 
 module.exports = middly;

@@ -11,9 +11,9 @@ services:
         image: chat-client
         ports:
             - "8080:8080"
-    ws1:
+    ws:
         image: chat-server
-    ws2:
-        image: chat-server
+        deploy:
+            replicas: 2
     redis:
         image: redis
