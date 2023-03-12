@@ -1,0 +1,21 @@
+.MessageFeed {
+  flex: 1 1;
+  width: 600px;
+  overflow: auto;
+  word-break: break-all;
+}
+
+.InfoMessage {
+  font-size: 12px;
+  width: 100%;
+  height: 0.5em;
+  border-bottom: 1px solid #888;
+  color: #888;
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem
+}
+
+.InfoMessage>span {
+  background-color: white;
+}

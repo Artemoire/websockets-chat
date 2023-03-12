@@ -1,0 +1,13 @@
+.AppHeader {
+  background-color: #eee;
+  color: #333;
+  width: 600px;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.AppHeaderSmall {
+  font-weight: 400;
+  font-size: 12px
+}
