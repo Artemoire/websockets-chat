@@ -6,11 +6,7 @@ services:
         ports:
             - "3000:3000"
         volumes:
-            - ./haproxy:/usr/local/etc/haproxy
-    chat-client:
-        image: chat-client
-        ports:
-            - "8080:8080"
+            - ./haproxy:/usr/local/etc/haproxy    
     ws:
         image: chat-server
         deploy:
