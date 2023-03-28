@@ -15,7 +15,7 @@ function App() {
 
   // console.log('Render');
   const { lastMessage, readyState, sendMessage } = useWebSocket('ws://localhost:3000/')
-  const emit = useCallback((event, data) => sendMessage(JSON.stringify({ event, data, nodeId })), [sendMessage, nodeId]);
+  const emit = useCallback((event, payload) => sendMessage(JSON.stringify({ event, payload, nodeId })), [sendMessage, nodeId]);
 
   useEffect(() => {
     if (user !== null || readyState !== WebSocket.OPEN) return;
@@ -33,9 +33,9 @@ function App() {
 
     const lastJsonMessage = JSON.parse(lastMessage.data);
 
-    if (lastJsonMessage.event === 'welcome') setNodeId(lastJsonMessage.data);
-    if (lastJsonMessage.event === 'load-messages') setMessages((messages) => [...lastJsonMessage.data, ...messages])
-    if (lastJsonMessage.event === 'chat') setMessages((messages) => [...messages, lastJsonMessage.data])
+    if (lastJsonMessage.event === 'welcome') setNodeId(lastJsonMessage.payload);
+    if (lastJsonMessage.event === 'load-messages') setMessages((messages) => [...lastJsonMessage.payload, ...messages])
+    if (lastJsonMessage.event === 'chat') setMessages((messages) => [...messages, lastJsonMessage.payload])
 
   }, [lastMessage, setMessages])
 

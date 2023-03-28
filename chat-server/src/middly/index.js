@@ -1,5 +1,15 @@
 const ws = require("websocket");
 const http = require("http");
+
+
+const jsonDataOrText = (data) => {
+  try {
+    return JSON.parse(data);
+  } catch (error) {
+  }
+  return data;
+}
+
 /**
  * @typedef MiddlyConfig
  * @property {http.Server<typeof http.IncomingMessage,typeof http.ServerResponse>=} httpServer
@@ -92,7 +102,7 @@ function middly(config) {
       handle({ type: "close", client, server });
     });
     connection.on("message", (data) => {
-      handle({ type: "message", client, server, data: data.utf8Data })
+      handle({ type: "message", client, server, data: jsonDataOrText(data.utf8Data) })
     })
   })
 

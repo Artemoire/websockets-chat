@@ -20,9 +20,8 @@ const wsApp = middly({ httpServer });
 wsApp.on("open", sendNodeIdOnConnect(wsApp));
 wsApp.on("message", checkNodeIdOnMessage)
 wsApp.on("message", (ev) => {
-  const jsonMessage = JSON.parse(ev.data);
-  if (jsonMessage.event === 'join') handleJoin(ev, jsonMessage);
-  if (jsonMessage.event === 'chat') handleChat(ev, jsonMessage);
+  if (ev.data.event === 'join') handleJoin(ev);
+  if (ev.data.event === 'chat') handleChat(ev);
 })
 
 async function main() {
