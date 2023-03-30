@@ -2,7 +2,7 @@
  * 
  * @param {import("../middly").WebSocketEvent} ev 
  */
-module.exports = async (ev) => {
+async function handleJoin(ev) {
     console.log('[INFO] User joined: ' + ev.data.payload.name);
     ev.client.user = ev.data.payload;
     const userJoinedEvent = JSON.stringify({
@@ -15,3 +15,5 @@ module.exports = async (ev) => {
     }))
     ev.server.publish(userJoinedEvent);
 }
+
+module.exports = handleJoin;

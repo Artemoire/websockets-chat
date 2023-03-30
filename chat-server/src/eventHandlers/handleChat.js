@@ -2,7 +2,7 @@
  * 
  * @param {import("../middly").WebSocketEvent} ev 
  */
-module.exports = (ev) => {
+function handleChat(ev) {
     if (!('user' in ev.client)) {
         console.log('[WARN] Anonymous user tried to send a message');
         return;
@@ -18,3 +18,5 @@ module.exports = (ev) => {
     ev.server.messageStore.store(chatData)
     ev.server.publish(JSON.stringify({ event: 'chat', payload: chatData }));
 }
+
+module.exports = handleChat;

@@ -1,4 +1,4 @@
-const ws = require("websocket");
+const uuid = require('uuid')
 const http = require("http");
 const middly = require("./src/middly");
 const { loadAppConfig } = require("./appConfigLoader");
@@ -17,7 +17,8 @@ const { MODE, PORT, REDIS_CHAT_CHANNEL, REDIS_HOST, REDIS_MESSAGE_LIST_CHANNEL }
 
 const httpServer = http.createServer();
 const wsApp = middly({ httpServer });
-wsApp.on("open", sendNodeIdOnConnect(wsApp));
+wsApp.nodeId = uuid.v4().substring(0, 7);
+wsApp.on("open", sendNodeIdOnConnect);
 wsApp.on("message", checkNodeIdOnMessage)
 wsApp.on("message", (ev) => {
   if (ev.data.event === 'join') handleJoin(ev);
@@ -39,6 +40,6 @@ async function main() {
     await redisOnChannelMessage(subscribeClient, REDIS_CHAT_CHANNEL, broadcastMessageToClients(wsApp));
   }
 
-  httpServer.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}/`));
+  httpServer.listen(PORT, () => console.log(`[INFO] Server@${wsApp.nodeId} listening on http://localhost:${PORT}/`));
 }
 main();
