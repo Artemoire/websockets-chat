@@ -13,7 +13,6 @@ function App() {
   const [user, setUser] = useState(null);
   const [nodeId, setNodeId] = useState("");
 
-  // console.log('Render');
   const { lastMessage, readyState, sendMessage } = useWebSocket('ws://localhost:3000/')
   const emit = useCallback((event, payload) => sendMessage(JSON.stringify({ event, payload, nodeId })), [sendMessage, nodeId]);
 
@@ -55,7 +54,7 @@ function App() {
     emit('join', { name: loginUser.name, id: loginUser.id })
   }
 
-  const say = (content) => {
+  const handleSendMessage = (content) => {
     const message = {
       id: uuidV4(),
       content,
@@ -70,20 +69,9 @@ function App() {
     <div className="App">
       <AppHeader handleSetUser={handleSetUser} nodeId={nodeId} />
       <MessageFeed messages={messages} />
-      <ChatBox say={say} />
+      <ChatBox handleSendMessage={handleSendMessage} />
     </div>
   );
-
-  // return (
-  //   readyState === 0 ? (<ConnectingScreen />) : (
-  //     user === null ? (<LoginScreen handleSetUser={handleSetUser} />) :
-  //       (<div>
-  //         <AppHeader handleSetUser={handleSetUser} nodeId={nodeId} />
-  //         <MessageFeed messages={messages} />
-  //         <ChatBox say={say} />
-  //       </div>)
-  //   )
-  // );
 }
 
 export default App;

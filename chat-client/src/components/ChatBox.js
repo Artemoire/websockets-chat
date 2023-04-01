@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export function ChatBox({ say }) {
+
+export function ChatBox({ handleSendMessage }) {
   const ref = useRef(null);
   const [inputState, setInputState] = useState("");
 
@@ -10,9 +11,9 @@ export function ChatBox({ say }) {
 
   const sendInput = useCallback((input) => {
     if (input === '') return;
-    say(input);
+    handleSendMessage(input);
     setInputState('');
-  }, [say])
+  }, [handleSendMessage])
 
   const handleChange = (ev) => {
     setInputState(ev.target.value)

@@ -1,35 +1,32 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./LoginScreen.css"
 
 export function LoginScreen({ handleSetUser }) {
   const ref = useRef(null);
-  const [state, setState] = useState({ value: "" });
+  const [inputState, setInputState] = useState("");
 
   useEffect(() => {
-    if (ref.current !== null && state.value === "") ref.current.focus();
+    if (ref.current !== null && inputState.value === "") ref.current.focus();
   });
 
+  const sendInput = useCallback((input) => {
+    if (input === '') return;
+    handleSetUser(input);
+    setInputState('');
+  }, [handleSetUser])
+
   const handleChange = (ev) => {
-    setState({ value: ev.target.value })
+    setInputState(ev.target.value)
   }
 
   const handleKeyDown = (ev) => {
     if (ev.code !== 'Enter') return;
-
-    const username = ev.target.value.trim();
-    if (username === '') return;
-
-    handleSetUser(username);
-    setState({ value: '' });
+    sendInput(ev.target.value.trim());
     ev.preventDefault();
   }
 
   const handleClick = () => {
-    const username = state.value.trim();
-    if (username === '') return;
-
-    handleSetUser(username)
-    setState({ value: '' })
+    sendInput(inputState.value.trim());
   }
 
   return (
@@ -40,7 +37,7 @@ export function LoginScreen({ handleSetUser }) {
           <input type="text" placeholder="Username"
             ref={ref}
             onKeyDown={handleKeyDown} onChange={handleChange}
-            value={state.value}
+            value={inputState}
           />
           <button onClick={handleClick}><b>Login</b></button>
         </div>
